@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Analysis #{{ analysis.id }} — Admin{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <a href="{{ url_for('admin.analyses') }}" class="small text-muted-light"><i class="bi bi-arrow-left"></i> Back to Analyses</a>
+
+  <div class="glass-card p-4 mt-3 mb-4">
+    <div class="d-flex justify-content-between flex-wrap align-items-start">
+      <div>
+        <h3 class="mb-1">{{ analysis.opportunity_title }}</h3>
+        <p class="text-muted-light mb-0">
+          Submitted by student ID {{ analysis.user_id }} &middot;
+          {{ analysis.created_at.strftime('%d %b %Y, %H:%M') }} UTC
+        </p>
+      </div>
+      <span class="badge badge-risk-{{ analysis.risk_level.lower() }} px-3 py-2">{{ analysis.risk_level }} ({{ analysis.risk_score }}/100)</span>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="glass-card p-4">
+        <h6 class="mb-3">Submitted Details</h6>
+        <table class="table table-sm">
+          <tr><td class="text-muted-light">Type</td><td>{{ analysis.opportunity_type|title }}</td></tr>
+          <tr><td class="text-muted-light">Company</td><td>{{ analysis.company_name or '—' }}</td></tr>
+          <tr><td class="text-muted-light">URL</td><td>{{ analysis.company_url or '—' }}</td></tr>
+          <tr><td class="text-muted-light">Recruiter</td><td>{{ analysis.recruiter_name or '—' }}</td></tr>
+          <tr><td class="text-muted-light">Recruiter Email</td><td>{{ analysis.recruiter_email or '—' }}</td></tr>
+          <tr><td class="text-muted-light">Work Mode</td><td>{{ analysis.work_mode or 'Not specified' }}</td></tr>
+          <tr><td class="text-muted-light">Salary/Stipend</td><td>{{ analysis.stipend_or_salary or '—' }}</td></tr>
+          <tr><td class="text-muted-light">Source</td><td>{{ 'AI-Assisted' if analysis.analysis_source == 'ai_assisted' else 'Rule-Based' }}</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="glass-card p-4">
+        <h6 class="mb-3">Detected Signals</h6>
+        {% if analysis.signals %}
+          {% for s in analysis.signals %}
+            <div class="checklist-item">
+              <div class="d-flex justify-content-between"><strong class="small">{{ s.signal_name }}</strong><span class="badge bg-secondary">+{{ s.score_contribution }}</span></div>
+              <p class="small text-muted-light mb-0">{{ s.explanation }}</p>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="small text-muted-light mb-0">No signals detected.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if analysis.description or analysis.recruiter_message %}
+  <div class="glass-card p-4 mt-4">
+    <h6 class="mb-3">Description &amp; Recruiter Message</h6>
+    {% if analysis.description %}<p class="small text-muted-light"><strong>Description:</strong> {{ analysis.description }}</p>{% endif %}
+    {% if analysis.recruiter_message %}<p class="small text-muted-light mb-0"><strong>Recruiter Message:</strong> {{ analysis.recruiter_message }}</p>{% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

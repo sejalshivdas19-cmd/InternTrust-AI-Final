@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}How It Works — InternTrust AI{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="mb-5 text-center">How It Works</h1>
+  <div class="row g-4">
+    {% set steps = [
+      ('Submit Opportunity Details', 'Enter the company, recruiter, description, and message you received — or upload the offer document.'),
+      ('Analyze the Opportunity', 'Our rule-based engine (and optional AI layer) scans the submission for configured risk signals.'),
+      ('Review the Risk Score', 'See a transparent 0–100 score mapped to Low, Medium, or High risk — never a bare verdict.'),
+      ('Understand the Warning Signs', 'Every detected signal comes with a plain-language explanation of why it matters.'),
+      ('Follow Verification Steps', 'Work through a practical checklist to independently verify the opportunity before proceeding.'),
+    ] %}
+    {% for title, desc in steps %}
+      <div class="col-md-12">
+        <div class="glass-card p-4 d-flex align-items-start gap-3">
+          <div class="step-number flex-shrink-0">{{ loop.index }}</div>
+          <div>
+            <h5 class="mb-1">{{ title }}</h5>
+            <p class="text-muted-light small mb-0">{{ desc }}</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="text-center mt-5">
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('student.analyze') }}" class="btn btn-gradient btn-lg">Start an Analysis</a>
+    {% else %}
+      <a href="{{ url_for('auth.signup') }}" class="btn btn-gradient btn-lg">Create a Free Account</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

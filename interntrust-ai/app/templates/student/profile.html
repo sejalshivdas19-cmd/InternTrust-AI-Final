@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Profile — InternTrust AI{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">Your Profile</h2>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="glass-card p-4">
+        <h5 class="mb-3">Account Details</h5>
+        <p class="small text-muted-light mb-1">Email</p>
+        <p class="mb-3">{{ current_user.email }}</p>
+        <p class="small text-muted-light mb-1">Member Since</p>
+        <p class="mb-4">{{ current_user.created_at.strftime('%d %b %Y') }}</p>
+
+        <form method="POST" action="{{ url_for('student.profile') }}" novalidate>
+          {{ form.hidden_tag() }}
+          <input type="hidden" name="update_profile" value="1">
+          <div class="mb-3">
+            {{ form.full_name.label(class="form-label") }}
+            {{ form.full_name(class="form-control") }}
+            {% for e in form.full_name.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <button type="submit" class="btn btn-gradient">Save Changes</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="glass-card p-4">
+        <h5 class="mb-3"><i class="bi bi-lock"></i> Change Password</h5>
+        <form method="POST" action="{{ url_for('student.change_password') }}" novalidate>
+          {{ password_form.hidden_tag() }}
+          <div class="mb-3">
+            {{ password_form.current_password.label(class="form-label") }}
+            {{ password_form.current_password(class="form-control") }}
+            {% for e in password_form.current_password.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="mb-3">
+            {{ password_form.new_password.label(class="form-label") }}
+            {{ password_form.new_password(class="form-control") }}
+            {% for e in password_form.new_password.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="mb-4">
+            {{ password_form.confirm_password.label(class="form-label") }}
+            {{ password_form.confirm_password(class="form-control") }}
+            {% for e in password_form.confirm_password.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <button type="submit" class="btn btn-outline-glow">Update Password</button>
+        </form>
+        <hr class="border-secondary my-4">
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> Logout</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

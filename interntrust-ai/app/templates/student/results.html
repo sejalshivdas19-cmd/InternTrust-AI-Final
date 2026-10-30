@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Results — {{ analysis.opportunity_title }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-start mb-4 gap-2">
+    <div>
+      <h2 class="mb-1">{{ analysis.opportunity_title }}</h2>
+      <p class="text-muted-light mb-0">
+        {{ analysis.company_name or 'Company not specified' }} &middot;
+        {{ analysis.opportunity_type|title }} &middot;
+        Analyzed {{ analysis.created_at.strftime('%d %b %Y, %H:%M') }} UTC
+      </p>
+    </div>
+    <a href="{{ url_for('student.download_report', analysis_id=analysis.id) }}" class="btn btn-gradient">
+      <i class="bi bi-file-earmark-pdf"></i> Download PDF Report
+    </a>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="glass-card p-4 text-center">
+        <span class="badge badge-risk-{{ analysis.risk_level.lower() }} px-3 py-2 mb-3">{{ analysis.risk_level }} Risk</span>
+        <div class="display-4 fw-bold mb-2">{{ analysis.risk_score }}<span class="fs-5 text-muted-light">/100</span></div>
+        <div class="risk-meter mb-3">
+          <div class="risk-meter-fill risk-fill-{{ analysis.risk_level.lower() }}" data-score="{{ analysis.risk_score }}" style="width:0"></div>
+        </div>
+        <p class="small text-muted-light mb-0">
+          Source: {{ 'AI-Assisted' if analysis.analysis_source == 'ai_assisted' else 'Rule-Based Engine' }}
+        </p>
+      </div>
+
+      <div class="glass-card p-4 mt-3">
+        <h6 class="mb-2"><i class="bi bi-file-text"></i> Summary</h6>
+        <p class="small text-muted-light mb-0">{{ analysis.analysis_summary }}</p>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="glass-card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-exclamation-triangle text-warning"></i> Detected Warning Signs</h5>
+        {% if analysis.signals %}
+          {% for s in analysis.signals %}
+            <div class="checklist-item">
+              <div class="d-flex justify-content-between">
+                <strong>{{ s.signal_name }}</strong>
+                <span class="badge bg-secondary">+{{ s.score_contribution }}</span>
+              </div>
+              <p class="small text-muted-light mb-1">{{ s.explanation }}</p>
+              {% if s.observed_value %}<p class="small text-muted mb-0"><em>Matched: "{{ s.observed_value }}"</em></p>{% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted-light small mb-0">No specific warning signs were detected in the submitted information.</p>
+        {% endif %}
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="glass-card p-4 h-100">
+            <h6 class="mb-3"><i class="bi bi-check-circle text-success"></i> Positive Indicators</h6>
+            {% if positive_indicators %}
+              <ul class="small text-muted-light mb-0 ps-3">
+                {% for p in positive_indicators %}<li>{{ p }}</li>{% endfor %}
+              </ul>
+            {% else %}
+              <p class="small text-muted-light mb-0">No specific positive indicators identified.</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="glass-card p-4 h-100">
+            <h6 class="mb-3"><i class="bi bi-question-circle text-info"></i> Missing Information</h6>
+            {% if missing_information %}
+              <ul class="small text-muted-light mb-0 ps-3">
+                {% for m in missing_information %}<li>{{ m }}</li>{% endfor %}
+              </ul>
+            {% else %}
+              <p class="small text-muted-light mb-0">All key fields were provided.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 mt-4">
+        <h5 class="mb-3"><i class="bi bi-list-check"></i> Verification Checklist</h5>
+        {% for item in checklist_items %}
+          <div class="checklist-item d-flex justify-content-between align-items-center">
+            <span class="small">{{ item.checklist_item }}</span>
+            <select class="form-select form-select-sm checklist-status-select" style="width:auto;" data-item-id="{{ item.id }}">
+              <option value="not_checked" {{ 'selected' if item.status == 'not_checked' }}>Not Checked</option>
+              <option value="verified" {{ 'selected' if item.status == 'verified' }}>Verified</option>
+              <option value="needs_attention" {{ 'selected' if item.status == 'needs_attention' }}>Needs Attention</option>
+            </select>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-card p-3 mt-4 text-center">
+    <p class="small text-muted-light mb-0">
+      <i class="bi bi-info-circle"></i> This assessment is based solely on the information you submitted and is not proof of fraud or legitimacy. Always verify independently before making any payment.
+    </p>
+  </div>
+</div>
+{% endblock %}

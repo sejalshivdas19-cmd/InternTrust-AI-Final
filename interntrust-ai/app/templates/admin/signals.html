@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Risk Signal Management — Admin{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-1">Risk Signal Management</h2>
+  <p class="text-muted-light mb-4">Enable, disable, or reweight the signals used by the rule-based risk engine. Changes apply to all future analyses immediately.</p>
+
+  {% set categories = signals|groupby('category') %}
+  {% for category, sigs in categories %}
+    <div class="glass-card p-4 mb-4">
+      <h5 class="mb-3 text-capitalize">{{ category }} Signals</h5>
+      {% for signal in sigs %}
+        <form method="POST" action="{{ url_for('admin.update_risk_signal', signal_id=signal.id) }}" class="row g-2 align-items-center checklist-item">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="col-md-5">
+            <strong class="small">{{ signal.signal_name }}</strong>
+            <p class="small text-muted-light mb-0">{{ signal.description }}</p>
+          </div>
+          <div class="col-md-3">
+            <label class="small text-muted-light">Weight</label>
+            <input type="number" name="default_weight" value="{{ signal.default_weight }}" min="0" max="100" class="form-control form-control-sm">
+          </div>
+          <div class="col-md-2 form-check ms-3">
+            <input type="checkbox" name="is_active" class="form-check-input" {{ 'checked' if signal.is_active }}>
+            <label class="form-check-label small text-muted-light">Active</label>
+          </div>
+          <div class="col-md-2 text-end">
+            <button type="submit" class="btn btn-sm btn-outline-glow">Save</button>
+          </div>
+        </form>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

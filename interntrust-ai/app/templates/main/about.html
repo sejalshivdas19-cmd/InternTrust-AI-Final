@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}About — InternTrust AI{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="mb-4">Why Students Need Opportunity Verification</h1>
+  <p class="text-muted-light">
+    Every year, students actively looking for internships and jobs receive offers through WhatsApp,
+    Telegram, LinkedIn, email, and job boards. Many are genuine. Some are not — and the warning signs
+    are not always obvious to someone applying for their first opportunity.
+  </p>
+
+  <div class="row g-4 my-4">
+    <div class="col-md-6">
+      <div class="glass-card p-4 h-100">
+        <h5><i class="bi bi-exclamation-diamond text-warning"></i> Common Warning Signs</h5>
+        <ul class="text-muted-light small mb-0">
+          <li>Requests for a registration, training, or security deposit fee</li>
+          <li>Recruiters using personal email addresses instead of company domains</li>
+          <li>Unrealistic pay for minimal work, or guaranteed placement claims</li>
+          <li>Urgency, pressure, or threats to act "right now"</li>
+          <li>Vague job descriptions with no verifiable company information</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="glass-card p-4 h-100">
+        <h5><i class="bi bi-shield-check text-success"></i> How InternTrust AI Helps</h5>
+        <ul class="text-muted-light small mb-0">
+          <li>Runs a transparent, explainable rule-based risk engine on every submission</li>
+          <li>Optionally uses AI to summarize and explain findings in plain language</li>
+          <li>Never declares an opportunity "fraudulent" — only flags signals for review</li>
+          <li>Provides a practical, step-by-step verification checklist</li>
+          <li>Keeps a private history of every analysis you've run</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-card p-4">
+    <h6 class="text-warning"><i class="bi bi-info-circle"></i> Responsible Use</h6>
+    <p class="text-muted-light small mb-0">
+      InternTrust AI is a decision-support tool, not a verdict engine. It is designed to help students
+      ask better questions and take safer next steps — the final judgment always remains with the user.
+    </p>
+  </div>
+</div>
+{% endblock %}

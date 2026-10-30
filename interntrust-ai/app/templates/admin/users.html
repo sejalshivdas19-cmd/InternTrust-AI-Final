@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Manage Users — Admin{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">Registered Students</h2>
+
+  <form method="GET" class="glass-card p-3 mb-4 d-flex gap-2">
+    <input type="text" name="q" value="{{ search }}" class="form-control" placeholder="Search by name or email...">
+    <button class="btn btn-gradient" type="submit">Search</button>
+  </form>
+
+  <div class="glass-card p-3">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          {% for u in pagination.items %}
+          <tr>
+            <td>{{ u.full_name }}</td>
+            <td class="text-muted-light">{{ u.email }}</td>
+            <td class="text-muted-light small">{{ u.created_at.strftime('%d %b %Y') }}</td>
+            <td>
+              {% if u.is_active_account %}<span class="badge badge-risk-low">Active</span>{% else %}<span class="badge badge-risk-high">Deactivated</span>{% endif %}
+            </td>
+            <td><a href="{{ url_for('admin.user_detail', user_id=u.id) }}" class="btn btn-sm btn-outline-glow">View</a></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="text-center text-muted-light py-4">No students found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if pagination.pages > 1 %}
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% for p in range(1, pagination.pages + 1) %}
+        <li class="page-item {{ 'active' if p == pagination.page }}">
+          <a class="page-link" href="{{ url_for('admin.users', page=p, q=search) }}">{{ p }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

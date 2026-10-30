@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Manage Analyses — Admin{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">All Analyses</h2>
+
+  <form method="GET" class="glass-card p-3 mb-4 row g-2">
+    <div class="col-md-6"><input type="text" name="q" value="{{ search }}" class="form-control" placeholder="Search by title or company..."></div>
+    <div class="col-md-4">
+      <select name="risk" class="form-select">
+        <option value="">All Risk Levels</option>
+        <option value="Low" {{ 'selected' if risk_filter == 'Low' }}>Low</option>
+        <option value="Medium" {{ 'selected' if risk_filter == 'Medium' }}>Medium</option>
+        <option value="High" {{ 'selected' if risk_filter == 'High' }}>High</option>
+      </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-gradient w-100">Filter</button></div>
+  </form>
+
+  <div class="glass-card p-3">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead><tr><th>Title</th><th>Company</th><th>Risk</th><th>Source</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+          {% for a in pagination.items %}
+          <tr>
+            <td>{{ a.opportunity_title }}</td>
+            <td class="text-muted-light">{{ a.company_name or '—' }}</td>
+            <td><span class="badge badge-risk-{{ a.risk_level.lower() }}">{{ a.risk_level }} ({{ a.risk_score }})</span></td>
+            <td class="text-muted-light small">{{ 'AI-Assisted' if a.analysis_source == 'ai_assisted' else 'Rule-Based' }}</td>
+            <td class="text-muted-light small">{{ a.created_at.strftime('%d %b %Y') }}</td>
+            <td><a href="{{ url_for('admin.analysis_detail', analysis_id=a.id) }}" class="btn btn-sm btn-outline-glow">View</a></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center text-muted-light py-4">No analyses found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if pagination.pages > 1 %}
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% for p in range(1, pagination.pages + 1) %}
+        <li class="page-item {{ 'active' if p == pagination.page }}">
+          <a class="page-link" href="{{ url_for('admin.analyses', page=p, q=search, risk=risk_filter) }}">{{ p }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

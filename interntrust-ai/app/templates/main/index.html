@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}InternTrust AI — Don't Trust Every Internship. Verify It.{% endblock %}
+{% block content %}
+
+<section class="hero-section">
+  <div class="hero-glow"></div>
+  <div class="container position-relative">
+    <div class="row align-items-center">
+      <div class="col-lg-7 fade-in">
+        <span class="badge badge-risk-medium mb-3 px-3 py-2">AI-Powered Verification Platform</span>
+        <h1 class="display-4 fw-bold mb-3">Don't Trust Every Internship. <span class="brand-gradient">Verify It.</span></h1>
+        <p class="lead text-muted-light mb-4">
+          InternTrust AI helps students assess the potential risks of internship and job opportunities
+          before they pay a rupee or share a single document — using an explainable, rule-based risk
+          engine and optional AI-assisted analysis.
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('student.analyze') }}" class="btn btn-gradient btn-lg"><i class="bi bi-search"></i> Analyze Opportunity</a>
+          {% else %}
+            <a href="{{ url_for('auth.signup') }}" class="btn btn-gradient btn-lg"><i class="bi bi-search"></i> Analyze Opportunity</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-glow btn-lg">Login</a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-5 mt-5 mt-lg-0">
+        <div class="glass-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted-light small">Sample Risk Report</span>
+            <span class="badge badge-risk-high">High Risk</span>
+          </div>
+          <div class="risk-meter mb-2"><div class="risk-meter-fill risk-fill-high" data-score="78" style="width:0"></div></div>
+          <p class="small text-muted-light mb-3">Score: 78 / 100</p>
+          <ul class="small list-unstyled">
+            <li><i class="bi bi-exclamation-triangle text-warning"></i> Registration fee requested</li>
+            <li><i class="bi bi-exclamation-triangle text-warning"></i> Recruiter email domain mismatch</li>
+            <li><i class="bi bi-exclamation-triangle text-warning"></i> Excessive urgency detected</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container py-5">
+  <div class="row g-4">
+    {% set features = [
+      ('bi-graph-up-arrow', 'Risk Assessment', 'Transparent 0-100 scoring across payment, communication, company, and URL signal categories.'),
+      ('bi-chat-square-text', 'Explainable Risk Signals', 'Every warning sign comes with a plain-language explanation — never a black-box verdict.'),
+      ('bi-stars', 'AI-Assisted Analysis', 'Optional AI layer summarizes opportunities and explains signals in simple language.'),
+      ('bi-check2-square', 'Verification Assistant', 'A practical checklist to guide you through independently verifying any opportunity.'),
+      ('bi-clock-history', 'Analysis History', 'Revisit, search, and filter every opportunity you have ever analyzed.'),
+      ('bi-file-earmark-pdf', 'PDF Reports', 'Download a professional, shareable PDF report for any analysis.'),
+    ] %}
+    {% for icon, title, desc in features %}
+      <div class="col-md-4">
+        <div class="glass-card p-4 h-100">
+          <i class="bi {{ icon }} fs-1 brand-gradient"></i>
+          <h5 class="mt-3">{{ title }}</h5>
+          <p class="text-muted-light small mb-0">{{ desc }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container py-4">
+  <div class="glass-card p-4 p-md-5 text-center">
+    <i class="bi bi-info-circle fs-3 text-warning"></i>
+    <p class="mt-3 mb-0 text-muted-light">
+      InternTrust AI provides an assessment based on the information you submit. A high score is a signal
+      to investigate further — <strong>not</strong> proof that an opportunity is fraudulent, and a low score
+      is not a guarantee of legitimacy. Always verify independently.
+    </p>
+  </div>
+</section>
+
+{% endblock %}

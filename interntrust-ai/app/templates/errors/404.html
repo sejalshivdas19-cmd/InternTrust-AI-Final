@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}404 — Page Not Found{% endblock %}
+{% block content %}
+<div class="container py-5 text-center">
+  <div class="glass-card p-5 mx-auto" style="max-width:500px;">
+    <h1 class="brand-gradient display-3">404</h1>
+    <h4 class="mb-3">Page Not Found</h4>
+    <p class="text-muted-light mb-4">The page you're looking for doesn't exist.</p>
+    <a href="{{ url_for('main.index') }}" class="btn btn-gradient">Back to Home</a>
+  </div>
+</div>
+{% endblock %}

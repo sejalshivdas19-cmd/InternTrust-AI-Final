@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}InternTrust AI{% endblock %}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-glass fixed-top py-3">
+  <div class="container">
+    <a class="navbar-brand brand-gradient fs-4" href="{{ url_for('main.index') }}">
+      <i class="bi bi-shield-check"></i> InternTrust AI
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.about') }}">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.how_it_works') }}">How It Works</a></li>
+
+        {% if current_user.is_authenticated and current_user.__class__.__name__ == 'User' %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('student.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('student.analyze') }}"><i class="bi bi-search"></i> Analyze</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('student.history') }}"><i class="bi bi-clock-history"></i> History</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('student.profile') }}"><i class="bi bi-person-circle"></i> {{ current_user.full_name.split(' ')[0] }}</a></li>
+          <li class="nav-item"><a class="btn btn-outline-glow btn-sm ms-lg-2" href="{{ url_for('auth.logout') }}">Logout</a></li>
+
+        {% elif current_user.is_authenticated and current_user.__class__.__name__ == 'Admin' %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Admin Panel</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.users') }}">Users</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.analyses') }}">Analyses</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.risk_signals') }}">Risk Signals</a></li>
+          <li class="nav-item"><a class="btn btn-outline-glow btn-sm ms-lg-2" href="{{ url_for('auth.logout') }}">Logout</a></li>
+
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
+          <li class="nav-item"><a class="btn btn-gradient btn-sm ms-lg-2" href="{{ url_for('auth.signup') }}">Signup</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main style="padding-top: 90px; min-height: 80vh;">
+  <div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'danger' if category == 'danger' else category }} alert-dismissible fade show glass-card border-0" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer-dark mt-5">
+  <div class="container">
+    <div class="row gy-4">
+      <div class="col-md-4">
+        <h5 class="brand-gradient">InternTrust AI</h5>
+        <p class="small">Don't Trust Every Internship. Verify It.</p>
+      </div>
+      <div class="col-md-4">
+        <h6 class="text-light">Links</h6>
+        <ul class="list-unstyled small">
+          <li><a href="{{ url_for('main.about') }}">About</a></li>
+          <li><a href="{{ url_for('main.how_it_works') }}">Features</a></li>
+          <li><a href="{{ url_for('main.privacy_policy') }}">Privacy Policy</a></li>
+          <li><a href="{{ url_for('main.terms') }}">Terms and Conditions</a></li>
+          <li><a href="{{ url_for('main.contact') }}">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h6 class="text-light">Disclaimer</h6>
+        <p class="small">InternTrust AI provides a risk assessment based on submitted information only. It cannot guarantee whether an opportunity is genuine or fraudulent. Always verify independently before making any payment.</p>
+      </div>
+    </div>
+    <hr class="border-secondary">
+    <p class="small text-center mb-0">&copy; {{ 2024 }}&ndash;2026 InternTrust AI. Built as an academic project.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

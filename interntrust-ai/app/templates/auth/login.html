@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Login — InternTrust AI{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="glass-card p-4 p-md-5 fade-in">
+        <h3 class="mb-1">Welcome Back</h3>
+        <p class="text-muted-light small mb-4">Log in to your student dashboard.</p>
+        <form method="POST" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control", placeholder="you@example.com") }}
+            {% for e in form.email.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="mb-3">
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control") }}
+            {% for e in form.password.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="form-check mb-4">
+            {{ form.remember(class="form-check-input") }}
+            {{ form.remember.label(class="form-check-label small text-muted-light") }}
+          </div>
+          <button type="submit" class="btn btn-gradient w-100">Log In</button>
+        </form>
+        <p class="text-center text-muted-light small mt-4 mb-1">
+          Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign up</a>
+        </p>
+        <p class="text-center small mb-0">
+          <a href="{{ url_for('auth.admin_login') }}" class="text-muted-light"><i class="bi bi-shield-lock"></i> Administrator Login</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

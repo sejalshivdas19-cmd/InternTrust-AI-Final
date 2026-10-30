@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — InternTrust AI{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-1">Welcome, {{ current_user.full_name.split(' ')[0] }} 👋</h2>
+      <p class="text-muted-light mb-0">Here's a summary of your opportunity analyses.</p>
+    </div>
+    <div class="d-flex gap-2 mt-3 mt-md-0">
+      <a href="{{ url_for('student.analyze') }}" class="btn btn-gradient"><i class="bi bi-search"></i> Quick Analyze</a>
+      <a href="{{ url_for('student.history') }}" class="btn btn-outline-glow"><i class="bi bi-clock-history"></i> View History</a>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="glass-card stat-card text-center">
+        <div class="stat-value brand-gradient">{{ total }}</div>
+        <div class="text-muted-light small">Total Analyses</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="glass-card stat-card text-center">
+        <div class="stat-value text-success">{{ low }}</div>
+        <div class="text-muted-light small">Low Risk</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="glass-card stat-card text-center">
+        <div class="stat-value text-warning">{{ medium }}</div>
+        <div class="text-muted-light small">Medium Risk</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="glass-card stat-card text-center">
+        <div class="stat-value text-danger">{{ high }}</div>
+        <div class="text-muted-light small">High Risk</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="glass-card p-4 h-100">
+        <h5 class="mb-3">Risk Distribution</h5>
+        {% if total > 0 %}
+          <canvas id="riskChart" height="220"></canvas>
+        {% else %}
+          <p class="text-muted-light small">Run your first analysis to see your risk distribution here.</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="glass-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Recent Analyses</h5>
+          <a href="{{ url_for('student.history') }}" class="small">View all &rarr;</a>
+        </div>
+        {% if recent %}
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead><tr><th>Title</th><th>Company</th><th>Risk</th><th></th></tr></thead>
+              <tbody>
+                {% for a in recent %}
+                <tr>
+                  <td>{{ a.opportunity_title }}</td>
+                  <td class="text-muted-light">{{ a.company_name or '—' }}</td>
+                  <td><span class="badge badge-risk-{{ a.risk_level.lower() }}">{{ a.risk_level }}</span></td>
+                  <td><a href="{{ url_for('student.results', analysis_id=a.id) }}" class="small">View</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-center py-4">
+            <i class="bi bi-inbox fs-1 text-muted-light"></i>
+            <p class="text-muted-light small mt-2 mb-3">No analyses yet. Run your first one now.</p>
+            <a href="{{ url_for('student.analyze') }}" class="btn btn-gradient btn-sm">Analyze an Opportunity</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{% if total > 0 %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+  const ctx = document.getElementById('riskChart');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Low', 'Medium', 'High'],
+      datasets: [{
+        data: [{{ low }}, {{ medium }}, {{ high }}],
+        backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'],
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      plugins: { legend: { labels: { color: '#f4f1fa' } } }
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}

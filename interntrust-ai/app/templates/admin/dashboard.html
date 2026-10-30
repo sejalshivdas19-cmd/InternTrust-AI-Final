@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — InternTrust AI{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4"><i class="bi bi-shield-lock"></i> Admin Dashboard</h2>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="glass-card stat-card text-center"><div class="stat-value brand-gradient">{{ total_students }}</div><div class="text-muted-light small">Registered Students</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="glass-card stat-card text-center"><div class="stat-value">{{ total_analyses }}</div><div class="text-muted-light small">Total Analyses</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="glass-card stat-card text-center"><div class="stat-value text-warning">{{ medium }}</div><div class="text-muted-light small">Medium Risk</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="glass-card stat-card text-center"><div class="stat-value text-danger">{{ high }}</div><div class="text-muted-light small">High Risk</div></div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="glass-card p-4">
+        <h5 class="mb-3">Risk Distribution</h5>
+        {% if total_analyses > 0 %}
+          <canvas id="adminRiskChart" height="220"></canvas>
+        {% else %}
+          <p class="text-muted-light small">No analyses in the system yet.</p>
+        {% endif %}
+        <div class="d-flex gap-3 mt-3">
+          <a href="{{ url_for('admin.users') }}" class="btn btn-outline-glow btn-sm">Manage Users</a>
+          <a href="{{ url_for('admin.risk_signals') }}" class="btn btn-outline-glow btn-sm">Risk Signals</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="glass-card p-4 mb-4">
+        <div class="d-flex justify-content-between mb-3"><h5 class="mb-0">Recent Analyses</h5><a href="{{ url_for('admin.analyses') }}" class="small">View all &rarr;</a></div>
+        {% if recent_analyses %}
+          <table class="table table-sm align-middle">
+            <thead><tr><th>Title</th><th>Risk</th><th></th></tr></thead>
+            <tbody>
+              {% for a in recent_analyses %}
+              <tr>
+                <td>{{ a.opportunity_title }}</td>
+                <td><span class="badge badge-risk-{{ a.risk_level.lower() }}">{{ a.risk_level }}</span></td>
+                <td><a href="{{ url_for('admin.analysis_detail', analysis_id=a.id) }}" class="small">View</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted-light small mb-0">No analyses yet.</p>
+        {% endif %}
+      </div>
+
+      <div class="glass-card p-4">
+        <h5 class="mb-3">Recent Admin Activity</h5>
+        {% if recent_activity %}
+          <ul class="list-unstyled small text-muted-light mb-0">
+            {% for log in recent_activity %}
+              <li class="mb-2"><i class="bi bi-dot"></i> {{ log.action }} <span class="text-muted">({{ log.created_at.strftime('%d %b, %H:%M') }})</span></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted-light small mb-0">No administrative actions recorded yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{% if total_analyses > 0 %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+  new Chart(document.getElementById('adminRiskChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Low', 'Medium', 'High'],
+      datasets: [{ data: [{{ low }}, {{ medium }}, {{ high }}], backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'] }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#b3a9c7' }, grid: { display: false } },
+        y: { ticks: { color: '#b3a9c7' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}
